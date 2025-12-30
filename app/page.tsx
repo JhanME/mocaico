@@ -17,7 +17,7 @@ import {
 // --- DATOS DEL USUARIO ---
 const DATA = {
   name: "Jhan Jhover Mocaico Espíritu",
-  role: "Ingeniería Informática | IoT & Embedded Systems",
+  role: "Ingeniero Informático",
   about: {
     title: "Acerca de Mí",
     // Bio reducida/intro para encajar en el diseño
@@ -53,21 +53,21 @@ const DATA = {
       subtitle: "Intérprete de música a código",
       desc: "Sistema que transforma pseudocódigo en partituras PDF, MIDI y audio WAV. Conecta lógica computacional con expresión artística.",
       tags: ["Python", "ANTLR4", "Docker", "LilyPond"],
-      icon: "🎼"
+      image: "/algoritmia.png"
     },
     {
       title: "Fonekids",
       subtitle: "Plataforma educativa",
       desc: "Plataforma interactiva y adaptativa para niños. Perfiles personalizados y experiencias educativas visuales.",
       tags: ["Next.js", "TypeScript", "Tailwind CSS"],
-      icon: "👶"
+      image:"/fonekids.png"
     },
     {
       title: "AirGuardian",
       subtitle: "Monitoreo IoT",
       desc: "Sistema de calidad del aire en interiores. Integra sensores físicos, diseño PCB y visualización de datos en tiempo real.",
       tags: ["C/C++", "Node-RED", "PCB Design", "IoT"],
-      icon: "🌫️"
+      image:"/airguardian.png"
     }
   ],
   contact: {
@@ -112,7 +112,7 @@ export default function Home() {
     if (typedText.length < fullText.length) {
       const timeout = setTimeout(() => {
         setTypedText(fullText.slice(0, typedText.length + 1));
-      }, 50);
+      }, 120);
       return () => clearTimeout(timeout);
     }
   }, [typedText, fullText]);
@@ -308,8 +308,13 @@ export default function Home() {
             {DATA.projects.map((project, index) => (
               <div key={index} className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col h-full hover:-translate-y-1">
                 
-                <div className="h-48 bg-gray-100 relative overflow-hidden flex items-center justify-center group-hover:bg-gray-200 transition">
-                  <span className="text-6xl group-hover:scale-110 transition duration-500">{project.icon}</span>
+                <div className="h-48 relative overflow-hidden bg-gray-100">
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
 
                 <div className="p-6 flex flex-col flex-grow">
