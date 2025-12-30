@@ -133,10 +133,10 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-gray-300">
+    <main className="min-h-screen bg-gray-50 text-gray-900  font-sans selection:bg-gray-300">
       
       {/* NAVBAR FLOTANTE */}
-      <nav className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full p-1.5 flex items-center transition-all duration-300 border ${
+      <nav className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full border border-gray-200 p-1.5 flex items-center transition-all duration-300 border ${
         scrolled 
           ? 'bg-white/90 backdrop-blur-md shadow-xl border-gray-200' 
           : 'bg-white/50 backdrop-blur-sm border-transparent'
@@ -184,12 +184,18 @@ export default function Home() {
           </p>
           
           <div className="flex gap-4 pt-4">
-            <a href={`mailto:${DATA.contact.email}`} className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-gray-800 transition flex items-center gap-2 hover:scale-105 active:scale-95 shadow-lg shadow-gray-400/20">
+            <a href={`mailto:${DATA.contact.email}`} className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-white hover:text-gray-900 transition-all flex items-center gap-2 hover:scale-105 active:scale-95 shadow-lg shadow-gray-400/20">
               Contratar <ArrowRight size={18} />
             </a>
-            <button className="px-6 py-3 bg-white border border-gray-200 text-gray-700 rounded-full font-medium hover:border-black hover:text-black transition flex items-center gap-2">
-              Descargar CV <Download size={18} />
-            </button>
+            
+            <a
+              href="/Jhan_Mocaico_Espiritu.pdf" 
+              download="CV_Jhan_Mocaico.pdf"
+              className="px-6 py-3 text-gray-900 font-medium bg-white border border-gray-200 rounded-full hover:text-white hover:bg-gray-900  transition hover:scale-105 flex items-center gap-2 cursor-pointer"
+            >
+             Descargar CV <Download size={18} /> 
+            </a>
+            
           </div>
 
           <div className="flex gap-4 pt-4 text-gray-500">
