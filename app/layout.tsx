@@ -18,9 +18,10 @@ export const metadata: Metadata = {
       template: "%s | Jhan Mocaico"
     },
   description: "Portafolio de Jhan Mocaico. Ingenierio Informatico en desarrollo web con Next.js, Python y IoT",
-  keywords: ["Jhan Mocaico", "Mocaico" "Ingeniero Informático", "IoT", "Desarrollo Web", "Next.js", "Portafolio", "Perú", "Sistemas Embebidos"],
+  keywords: ["Jhan Mocaico", "Mocaico", "Ingeniero Informático", "IoT", "Desarrollo Web", "Next.js", "Portafolio", "Perú", "Sistemas Embebidos"],
   authors: [{ name: "Jhan Mocaico" }],
   creator: "Jhan Mocaico",
+  
 };
 
 export default function RootLayout({
