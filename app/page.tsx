@@ -20,7 +20,7 @@ const DATA = {
   role: "Ingeniero Informático",
   about: {
     title: "Acerca de Mí",
-    // Bio reducida/intro para encajar en el diseño
+    // Bio
     intro: "Estudiante apasionado por la intersección entre el software y el hardware. Me enfoco en construir soluciones escalables que conectan el mundo físico con el digital.",
     description: "Soy estudiante de cuarto año de Ingeniería Informática con sólida experiencia práctica en sistemas embebidos y soluciones IoT. He liderado proyectos bajo metodologías ágiles, enfocándome en la resolución de problemas técnicos complejos.",
     education: {
@@ -164,7 +164,7 @@ export default function Home() {
       {/* HERO SECTION */}
       <section id="inicio" className="pt-40 pb-20 px-4 md:px-8 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
         <div className="flex-1 space-y-6">
-          <div className="inline-block px-3 py-1 bg-gray-100 text-black border border-gray-200 rounded-full text-sm font-semibold tracking-wide">
+          <div className="inline-block px-3 py-1 bg-gray-100 text-black border border-gray-200 rounded-full hover:scale-105 transition animation-300 text-sm font-semibold tracking-wide">
             Disponible para trabajar
           </div>
           
@@ -189,7 +189,7 @@ export default function Home() {
             </a>
             
             <a
-              href="/Jhan_Mocaico_Espiritu.pdf" 
+              href="/Jhan_Mocaico_CVv.pdf" 
               download="CV_Jhan_Mocaico.pdf"
               className="px-6 py-3 text-gray-900 font-medium bg-white border border-gray-200 rounded-full hover:text-white hover:bg-gray-900  transition hover:scale-105 flex items-center gap-2 cursor-pointer"
             >
