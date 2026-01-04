@@ -14,13 +14,28 @@ import {
   ExternalLink
 } from 'lucide-react';
 
+// --- ICONO PERSONALIZADO DE GOOGLE ---
+const GoogleIcon = ({ className }: { className?: string }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+  </svg>
+);
+
 // --- DATOS DEL USUARIO ---
 const DATA = {
   name: "Jhan Jhover Mocaico Espíritu",
   role: "Ingeniero Informático",
+  role2: "Desarrollador web y Iot",
   about: {
     title: "Acerca de Mí",
-    // Bio
     intro: "Estudiante apasionado por la intersección entre el software y el hardware. Me enfoco en construir soluciones escalables que conectan el mundo físico con el digital.",
     description: "Soy estudiante de cuarto año de Ingeniería Informática con sólida experiencia práctica en sistemas embebidos y soluciones IoT. He liderado proyectos bajo metodologías ágiles, enfocándome en la resolución de problemas técnicos complejos.",
     education: {
@@ -74,15 +89,22 @@ const DATA = {
     email: "jhan.mocaico@upch.pe",
     phone: "+51 963242281",
     github: "https://github.com/JhanME",
-    linkedin: "https://www.linkedin.com/in/jhanmocaico"
+    linkedin: "https://www.linkedin.com/in/jhanmocaico",
+    google: "mailto:jhan.mocaico@upch.pe" // Enlace para el icono de Google (usando mailto o perfil dev)
   }
 };
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio"); 
-  const [typedText, setTypedText] = useState("");
-  const fullText = DATA.role;
+  
+  // Estados para la máquina de escribir
+  const [text, setText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [loopNum, setLoopNum] = useState(0); 
+  const [typingSpeed, setTypingSpeed] = useState(150);
+  
+  const phrases = ["Ingeniero Informático",  "Desarrollador web y IoT"];
 
   // Lógica de Scroll y ScrollSpy
   useEffect(() => {
@@ -107,15 +129,34 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Efecto de Máquina de Escribir
+  // Efecto de Máquina de Escribir (CORREGIDO)
   useEffect(() => {
-    if (typedText.length < fullText.length) {
-      const timeout = setTimeout(() => {
-        setTypedText(fullText.slice(0, typedText.length + 1));
-      }, 120);
-      return () => clearTimeout(timeout);
-    }
-  }, [typedText, fullText]);
+    const i = loopNum % phrases.length;
+    const fullText = phrases[i];
+
+    const handleTyping = () => {
+      setText(isDeleting 
+        ? fullText.substring(0, text.length - 1) 
+        : fullText.substring(0, text.length + 1)
+      );
+
+      // Velocidad de tipeo
+      setTypingSpeed(isDeleting ? 50 : 200);
+
+      // Cuando termina de escribir la frase
+      if (!isDeleting && text === fullText) {
+        setTimeout(() => setIsDeleting(true), 4000); // Espera 2 segundos antes de borrar
+      } 
+      // Cuando termina de borrar
+      else if (isDeleting && text === "") {
+        setIsDeleting(false);
+        setLoopNum(loopNum + 1);
+      }
+    };
+
+    const timer = setTimeout(handleTyping, typingSpeed);
+    return () => clearTimeout(timer);
+  }, [text, isDeleting, loopNum, phrases, typingSpeed]);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -174,7 +215,7 @@ export default function Home() {
           
           <div className="h-8 md:h-10 flex items-center">
              <span className="text-xl md:text-2xl text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded">
-               {typedText}
+               {text}
                <span className="animate-pulse ml-1 text-black">|</span>
              </span>
           </div>
@@ -198,9 +239,17 @@ export default function Home() {
             
           </div>
 
-          <div className="flex gap-4 pt-4 text-gray-500">
-            <a href={DATA.contact.github} target="_blank" className="text-gray-600 hover:text-black transition hover:scale-110"><Github /></a>
-            <a href={DATA.contact.linkedin} target="_blank" className="text-gray-600 hover:text-black transition hover:scale-110"><Linkedin /></a>
+          {/* ICONOS SOCIALES (Incluyendo Google) */}
+          <div className="flex gap-6 pt-4 items-center">
+            <a href={DATA.contact.github} target="_blank" className="text-gray-600 hover:text-black transition hover:scale-110">
+                <Github size={24} />
+            </a>
+            <a href={DATA.contact.linkedin} target="_blank" className="text-gray-600 hover:text-[#0077b5] transition hover:scale-110">
+                <Linkedin size={24} />
+            </a>
+            <a href={`mailto:${DATA.contact.email}`} className="transition hover:scale-110 filter grayscale hover:grayscale-0 opacity-70 hover:opacity-100">
+                <GoogleIcon className="w-6 h-6" />
+            </a>
           </div>
         </div>
 
@@ -218,17 +267,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ABOUT SECTION - RESTRUCTURED */}
+      {/* ABOUT SECTION */}
       <section id="acerca" className="py-20 px-4 md:px-8 max-w-6xl mx-auto">
         <div className="flex flex-col md:flex-row gap-16 items-start">
           
           {/* IMAGEN IZQUIERDA */}
           <div className="flex-1 w-full relative">
             <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl bg-gray-200 group">
-               {/* Si tienes una imagen about.jpg, se verá aquí */}
                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent z-10" />
                <Image 
-                src="/jhan2.jpeg" // Asegúrate de tener esta imagen o usa mocaico.jpeg repetida si prefieres
+                src="/jhan2.jpeg" 
                 alt="Sobre mí" 
                 width={600} 
                 height={800}
@@ -249,7 +297,6 @@ export default function Home() {
               </h2>
              
               <div className="mb-6 transition-all duration-300 hover:scale-105 cursor-default">
-                
                 <p className="text-gray-600 leading-relaxed mb-4 ">
                   {DATA.about.description}
                 </p>
@@ -258,14 +305,12 @@ export default function Home() {
               {/* BLOQUE EDUCACIÓN */}
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1 h-6 bg-black rounded-full"></div> {/* Barra vertical negra */}
+                  <div className="w-1 h-6 bg-black rounded-full"></div>
                   <h3 className="text-xl font-bold text-gray-800">Educación</h3>
                 </div>
                 
                 <div className="ml-4 border-l-2 border-gray-100 pl-6 pb-2 space-y-1 relative transition-all duration-300 hover:scale-105">
-                  {/* Punto decorativo */}
                   <div className="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-gray-300 rounded-full border-2 border-white hover:scale-300 trasiton-all duration-300"></div>
-                  
                   <h4 className="font-bold text-lg text-gray-500 hover:text-lg trasiton-all duration-300">{DATA.about.education.university}</h4>
                   <p className="text-gray-700 font-medium ">{DATA.about.education.degree}</p>
                   <p className="text-gray-400 text-sm italic hover:text-lg transition-all duration-300">{DATA.about.education.status}</p>
@@ -275,7 +320,7 @@ export default function Home() {
               {/* BLOQUE HABILIDADES (Skills) */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1 h-6 bg-black rounded-full"></div> {/* Barra vertical negra */}
+                  <div className="w-1 h-6 bg-black rounded-full"></div>
                   <h3 className="text-xl font-bold text-gray-800">Habilidades Técnicas</h3>
                 </div>
 
@@ -380,10 +425,12 @@ export default function Home() {
             <button onClick={() => scrollToSection('servicios')} className="hover:text-white transition">Servicios</button>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-center">
             <a href={DATA.contact.github} className="hover:text-gray-300 transition"><Github /></a>
             <a href={DATA.contact.linkedin} className="hover:text-gray-300 transition"><Linkedin /></a>
-            <a href={`mailto:${DATA.contact.email}`} className="hover:text-gray-300 transition"><Mail /></a>
+            <a href={`mailto:${DATA.contact.email}`} className="hover:text-gray-300 transition opacity-70 hover:opacity-100">
+                <GoogleIcon className="w-6 h-6 text-white fill-white" />
+            </a>
           </div>
         </div>
         <div className="max-w-6xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-xs text-gray-500">
