@@ -88,7 +88,7 @@ export default function Home() {
   const [loopNum, setLoopNum] = useState(0); 
   const [typingSpeed, setTypingSpeed] = useState(150);
   
-  const phrases = ["Ingeniero Informático", "Desarrollador web y IoT"];
+  const phrases = ["Ingeniero Informático","Desarrollador web & IoT"];
 
   // 1. DEFINIMOS LOS DATOS ESTRUCTURADOS (SCHEMA.ORG)
   const jsonLd = {
