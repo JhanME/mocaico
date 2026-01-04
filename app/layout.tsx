@@ -17,41 +17,68 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://mocaico.dev"), 
 
   title: {
-      default: "Jhan Mocaico | Ingeniero Informático",
-      template: "%s | Jhan Mocaico"
-    },
+    default: "Jhan Mocaico | Ingeniero Informático",
+    template: "%s | Jhan Mocaico"
+  },
   description: "Portafolio de Jhan Mocaico. Ingeniero Informático especializado en desarrollo web con Next.js, Python, IoT y Sistemas Embebidos.",
   
   keywords: ["Jhan Mocaico", "Mocaico", "Ingeniero Informático", "IoT", "Desarrollo Web", "Next.js", "Portafolio", "Perú", "Sistemas Embebidos"],
-  authors: [{ name: "Jhan Mocaico" }],
+  authors: [{ name: "Jhan Mocaico", url: "https://mocaico.dev" }],
   creator: "Jhan Mocaico",
-
+  publisher: "Jhan Mocaico",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  
   // 2. Configuración extendida para redes sociales (Open Graph)
   openGraph: {
-    title: "Jhan Mocaico | Ingeniero Informático",
-    description: "Transformando ideas en soluciones reales con Software y Hardware. Mira mis proyectos en IoT y Web.",
+    type: "website",
+    locale: "es_PE",
     url: "https://mocaico.dev",
     siteName: "Jhan Mocaico Portfolio",
-    locale: "es_PE", // Configurado para Perú
-    type: "website",
+    title: "Jhan Mocaico | Ingeniero Informático",
+    description: "Transformando ideas en soluciones reales con Software y Hardware. Especializado en IoT, Sistemas Embebidos y Desarrollo Web moderno.",
     images: [
       {
-        url: "/opengraph-image.png", // Asegúrate de que esta imagen esté en tu carpeta /public
+        url: "/opengraph-image.png",
         width: 1200,
         height: 630,
-        alt: "Jhan Mocaico Portfolio - Web & IoT",
+        alt: "Jhan Mocaico - Ingeniero Informático especializado en IoT y Desarrollo Web",
+        type: "image/png",
       },
     ],
   },
   
-  // 3. Configuración para tarjetas de Twitter
+  // 3. Configuración para tarjetas de Twitter / X
   twitter: {
     card: "summary_large_image",
     title: "Jhan Mocaico | Ingeniero Informático",
-    description: "Portafolio profesional. Proyectos en IoT, Next.js y Embebidos.",
-    // creator: "@TuUsuarioDeTwitter", // Descomenta y pon tu usuario si tienes Twitter
-    images: ["/opengraph-image.png"],
+    description: "Transformando ideas en soluciones reales con Software y Hardware. Proyectos en IoT, Next.js y Sistemas Embebidos.",
+    // creator: "@tuUsuarioDeTwitter", // Descomenta y agrega tu usuario de Twitter/X
+    // site: "@tuUsuarioDeTwitter", // Descomenta si tienes un sitio de Twitter/X
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Jhan Mocaico - Ingeniero Informático",
+      },
+    ],
   },
+  
+  // 4. Metadata adicional para mejor SEO
+  alternates: {
+    canonical: "https://mocaico.dev",
+  },
+  category: "Technology",
 };
 
 export default function RootLayout({
