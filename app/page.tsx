@@ -92,6 +92,7 @@ export default function Home() {
 
   // 1. DEFINIMOS LOS DATOS ESTRUCTURADOS (SCHEMA.ORG)
   const jsonLd = {
+    
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Jhan Mocaico Espíritu",
