@@ -21,6 +21,10 @@ export const metadata: Metadata = {
   keywords: ["Jhan Mocaico", "Mocaico", "Ingeniero Informático", "IoT", "Desarrollo Web", "Next.js", "Portafolio", "Perú", "Sistemas Embebidos"],
   authors: [{ name: "Jhan Mocaico" }],
   creator: "Jhan Mocaico",
+
+  openGraph: {
+    images : ["/opengraph-image.png"],
+  },
   
 };
 
