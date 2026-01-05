@@ -11,7 +11,9 @@ import {
   Layers, 
   ArrowRight, 
   Download,
-  ExternalLink
+  ExternalLink,
+  Moon,
+  Sun
 } from 'lucide-react';
 
 // --- DATOS DEL USUARIO ---
@@ -34,17 +36,17 @@ const DATA = {
     {
       title: "Desarrollo IoT & Embebidos",
       desc: "Integración de sensores, diseño de PCB y programación de microcontroladores (ESP32, Arduino).",
-      icon: <Cpu className="w-8 h-8 mb-4 text-black" />
+      icon: <Cpu className="w-8 h-8 mb-4" />
     },
     {
       title: "Desarrollo de Software",
       desc: "Creación de intérpretes, automatización con Python y aplicaciones web modernas.",
-      icon: <Terminal className="w-8 h-8 mb-4 text-black" />
+      icon: <Terminal className="w-8 h-8 mb-4" />
     },
     {
       title: "Infraestructura & Datos",
       desc: "Gestión de pipelines de datos con Node-RED, Docker y visualización en tiempo real.",
-      icon: <Layers className="w-8 h-8 mb-4 text-black" />
+      icon: <Layers className="w-8 h-8 mb-4" />
     }
   ],
   projects: [
@@ -80,15 +82,84 @@ const DATA = {
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
-  const [activeSection, setActiveSection] = useState("inicio"); 
-  
+  const [activeSection, setActiveSection] = useState("inicio");
+  const [darkMode, setDarkMode] = useState(true); // Default to dark mode
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [buttonPosition, setButtonPosition] = useState({ x: 0, y: 0 });
+  const [previousMode, setPreviousMode] = useState(true);
+
   // Estados para la máquina de escribir
   const [text, setText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
-  const [loopNum, setLoopNum] = useState(0); 
+  const [loopNum, setLoopNum] = useState(0);
   const [typingSpeed, setTypingSpeed] = useState(150);
-  
+
   const phrases = ["Ingeniero Informático","Desarrollador web & IoT"];
+
+  // Inicializar dark mode - respetar preferencia del sistema
+  useEffect(() => {
+    // Verificar si hay una preferencia guardada
+    const stored = localStorage.getItem('darkMode');
+    // Si hay un valor guardado, usarlo; si no, usar la preferencia del sistema
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDark = stored !== null ? stored === 'true' : systemPrefersDark;
+
+    setDarkMode(isDark);
+
+    // Aplicar la clase dark al elemento HTML
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  // Escuchar cambios en la preferencia del sistema
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Solo actualizar si no hay preferencia guardada
+      if (localStorage.getItem('darkMode') === null) {
+        setDarkMode(e.matches);
+      }
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  // Sincronizar darkMode con el DOM y localStorage
+  useEffect(() => {
+    const html = document.documentElement;
+    if (darkMode) {
+      html.classList.add('dark');
+    } else {
+      html.classList.remove('dark');
+    }
+    // Guardar en localStorage cuando cambia
+    localStorage.setItem('darkMode', String(darkMode));
+  }, [darkMode]);
+
+  // Toggle dark mode
+  const toggleDarkMode = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const button = event.currentTarget;
+    const rect = button.getBoundingClientRect();
+    const x = rect.left + rect.width / 2;
+    const y = rect.top + rect.height / 2;
+
+    setButtonPosition({ x, y });
+    setPreviousMode(darkMode);
+    setIsAnimating(true);
+
+    // Pequeño delay para que se vea la animación antes de cambiar
+    setTimeout(() => {
+      setDarkMode(prev => !prev);
+    }, 100);
+
+    // Terminar la animación
+    setTimeout(() => {
+      setIsAnimating(false);
+    }, 800);
+  };
 
   // 1. DEFINIMOS LOS DATOS ESTRUCTURADOS (SCHEMA.ORG)
   const jsonLd = {
@@ -170,19 +241,35 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-gray-50 text-gray-900 font-sans selection:bg-gray-300">
-      
-      {/* 2. INYECTAMOS EL SCRIPT PARA GOOGLE (JSON-LD) */}
+    <>
+      {/* OVERLAY DE ANIMACIÓN DE OLA - DETRÁS DE TODO */}
+      {isAnimating && (
+        <div
+          className="fixed inset-0 pointer-events-none"
+          style={{
+            zIndex: -1,
+            background: !previousMode ? '#111827' : '#f9fafb',
+            clipPath: `circle(0% at ${buttonPosition.x}px ${buttonPosition.y}px)`,
+            animation: 'expandCircle 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards',
+            '--x': `${buttonPosition.x}px`,
+            '--y': `${buttonPosition.y}px`,
+          } as React.CSSProperties}
+        />
+      )}
+
+      <main className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans selection:bg-gray-300 dark:selection:bg-gray-700 relative">
+
+        {/* 2. INYECTAMOS EL SCRIPT PARA GOOGLE (JSON-LD) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
       {/* NAVBAR FLOTANTE */}
-      <nav className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full border border-gray-200 p-1.5 flex items-center transition-all duration-300 border ${
+      <nav className={`fixed top-6 left-1/2 -translate-x-1/2 z-50 rounded-full border p-1.5 flex items-center gap-2 transition-all duration-300 ${
         scrolled 
-          ? 'bg-white/90 backdrop-blur-md shadow-xl border-gray-200' 
-          : 'bg-white/50 backdrop-blur-sm border-transparent'
+          ? 'bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-xl border-gray-200 dark:border-gray-700' 
+          : 'bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border-gray-200 dark:border-gray-700'
       }`}>
         <div className="flex bg-transparent rounded-full relative">
           {navItems.map((item) => (
@@ -192,49 +279,71 @@ export default function Home() {
               className={`relative px-5 py-2 text-sm font-medium rounded-full transition-all duration-300 z-10 ${
                 activeSection === item.id 
                   ? 'text-white' 
-                  : 'text-gray-600 hover:text-black'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
               }`}
             >
               {activeSection === item.id && (
-                <span className="absolute inset-0 bg-black rounded-full -z-10 animate-fade-in" />
+                <span className="absolute inset-0 bg-black dark:bg-gray-700 rounded-full -z-10 animate-fade-in" />
               )}
               {item.label}
             </button>
           ))}
         </div>
+        <button
+          onClick={toggleDarkMode}
+          className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-300 ml-2 overflow-hidden"
+          aria-label="Toggle dark mode"
+        >
+          <div className="relative w-5 h-5">
+            <Sun
+              className={`absolute inset-0 w-5 h-5 text-gray-700 transition-all duration-500 ${
+                darkMode
+                  ? 'rotate-90 scale-0 opacity-0'
+                  : 'rotate-0 scale-100 opacity-100'
+              }`}
+            />
+            <Moon
+              className={`absolute inset-0 w-5 h-5 text-gray-300 transition-all duration-500 ${
+                darkMode
+                  ? 'rotate-0 scale-100 opacity-100'
+                  : '-rotate-90 scale-0 opacity-0'
+              }`}
+            />
+          </div>
+        </button>
       </nav>
 
       {/* HERO SECTION */}
       <section id="inicio" className="pt-40 pb-20 px-4 md:px-8 max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
         <div className="flex-1 space-y-6">
-          <div className="inline-block px-3 py-1 bg-gray-100 text-black border border-gray-200 rounded-full hover:scale-105 transition animation-300 text-sm font-semibold tracking-wide">
+          <div className="inline-block px-3 py-1 bg-gray-100 dark:bg-gray-800 text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-full hover:scale-105 transition animation-300 text-sm font-semibold tracking-wide">
             Disponible para trabajar
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900">
-            Hola, soy <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400">Jhan</span>
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 dark:text-white">
+            Hola, soy <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-gray-300 dark:to-gray-500">Jhan</span>
           </h1>
           
           <div className="h-8 md:h-10 flex items-center">
-             <span className="text-xl md:text-2xl text-gray-600 font-mono bg-gray-100 px-2 py-1 rounded">
+             <span className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                {text}
-               <span className="animate-pulse ml-1 text-black">|</span>
+               <span className="animate-pulse ml-1 text-black dark:text-white">|</span>
              </span>
           </div>
 
-          <p className="text-gray-500 max-w-lg text-lg pt-2">
+          <p className="text-gray-500 dark:text-gray-400 max-w-lg text-lg pt-2">
             Transformo conceptos técnicos en experiencias reales. Especializado en IoT, Sistemas Embebidos y Desarrollo Web moderno.
           </p>
           
           <div className="flex gap-4 pt-4">
-            <a href={`mailto:${DATA.contact.email}`} className="px-6 py-3 bg-black text-white rounded-full font-medium hover:bg-white hover:text-gray-900 transition-all flex items-center gap-2 hover:scale-105 active:scale-95 shadow-lg shadow-gray-400/20">
+            <a href={`mailto:${DATA.contact.email}`} className="px-6 py-3 bg-black dark:bg-white text-white dark:text-black rounded-full font-medium hover:bg-white dark:hover:bg-gray-200 hover:text-gray-900 dark:hover:text-black transition-all flex items-center gap-2 hover:scale-105 active:scale-95 shadow-lg shadow-gray-400/20 dark:shadow-gray-600/20">
               Contratar <ArrowRight size={18} />
             </a>
             
             <a
               href="/Jhan_Mocaico_CVv.pdf" 
               download="CV_Jhan_Mocaico.pdf"
-              className="px-6 py-3 text-gray-900 font-medium bg-white border border-gray-200 rounded-full hover:text-white hover:bg-gray-900  transition hover:scale-105 flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3 text-gray-900 dark:text-gray-100 font-medium bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-full hover:text-white dark:hover:text-black hover:bg-gray-900 dark:hover:bg-gray-700 transition hover:scale-105 flex items-center gap-2 cursor-pointer"
             >
              Descargar CV <Download size={18} /> 
             </a>
@@ -243,10 +352,10 @@ export default function Home() {
 
           {/* ICONOS SOCIALES */}
           <div className="flex gap-6 pt-4 items-center">
-            <a href={DATA.contact.github} target="_blank" className="text-gray-600 hover:text-black transition hover:scale-110">
+            <a href={DATA.contact.github} target="_blank" className="text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white transition hover:scale-110">
                 <Github size={24} />
             </a>
-            <a href={DATA.contact.linkedin} target="_blank" className="text-gray-600 hover:text-[#0077b5] transition hover:scale-110">
+            <a href={DATA.contact.linkedin} target="_blank" className="text-gray-600 dark:text-gray-400 hover:text-[#0077b5] transition hover:scale-110">
                 <Linkedin size={24} />
             </a>
            
@@ -254,7 +363,7 @@ export default function Home() {
         </div>
 
         <div className="flex-1 relative flex justify-center">
-          <div className="relative w-80 h-80 md:w-[450px] md:h-[450px] rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition duration-500 border-4 border-white bg-gray-100">
+          <div className="relative w-80 h-80 md:w-[450px] md:h-[450px] rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition duration-500 border-4 border-white dark:border-gray-800 bg-gray-100 dark:bg-gray-800">
             <Image 
               src="/mocaico.jpeg" 
               alt="Jhan Mocaico" 
@@ -292,12 +401,12 @@ export default function Home() {
           {/* INFORMACIÓN DERECHA */}
           <div className="flex-1 space-y-8">
             <div>
-              <h2 className="text-4xl font-bold mb-6 text-gray-900">
-                Acerca de <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400">Mí</span>
+              <h2 className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
+                Acerca de <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-600 to-gray-400 dark:from-white dark:via-gray-300 dark:to-gray-500">Mí</span>
               </h2>
              
               <div className="mb-6 transition-all duration-300 hover:scale-105 cursor-default">
-                <p className="text-gray-600 leading-relaxed mb-4 ">
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4 ">
                   {DATA.about.description}
                 </p>
               </div>
@@ -305,30 +414,30 @@ export default function Home() {
               {/* BLOQUE EDUCACIÓN */}
               <div className="mb-8">
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1 h-6 bg-black rounded-full"></div>
-                  <h3 className="text-xl font-bold text-gray-800">Educación</h3>
+                  <div className="w-1 h-6 bg-black dark:bg-white rounded-full"></div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">Educación</h3>
                 </div>
                 
-                <div className="ml-4 border-l-2 border-gray-100 pl-6 pb-2 space-y-1 relative transition-all duration-300 hover:scale-105">
-                  <div className="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-gray-300 rounded-full border-2 border-white hover:scale-300 trasiton-all duration-300"></div>
-                  <h4 className="font-bold text-lg text-gray-500 hover:text-lg trasiton-all duration-300">{DATA.about.education.university}</h4>
-                  <p className="text-gray-700 font-medium ">{DATA.about.education.degree}</p>
-                  <p className="text-gray-400 text-sm italic hover:text-lg transition-all duration-300">{DATA.about.education.status}</p>
+                <div className="ml-4 border-l-2 border-gray-100 dark:border-gray-700 pl-6 pb-2 space-y-1 relative transition-all duration-300 hover:scale-105">
+                  <div className="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-gray-300 dark:bg-gray-600 rounded-full border-2 border-white dark:border-gray-900 hover:scale-300 trasiton-all duration-300"></div>
+                  <h4 className="font-bold text-lg text-gray-500 dark:text-gray-400 hover:text-lg trasiton-all duration-300">{DATA.about.education.university}</h4>
+                  <p className="text-gray-700 dark:text-gray-300 font-medium ">{DATA.about.education.degree}</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-sm italic hover:text-lg transition-all duration-300">{DATA.about.education.status}</p>
                 </div>
               </div>
 
               {/* BLOQUE HABILIDADES (Skills) */}
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-1 h-6 bg-black rounded-full"></div>
-                  <h3 className="text-xl font-bold text-gray-800">Habilidades Técnicas</h3>
+                  <div className="w-1 h-6 bg-black dark:bg-white rounded-full"></div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">Habilidades Técnicas</h3>
                 </div>
 
                 <div className="flex flex-wrap gap-2 ml-1">
                   {DATA.about.skills.map((skill, index) => (
                     <span 
                       key={index} 
-                      className="px-4 py-1.5 bg-white border border-gray-200 text-gray-700 rounded-full text-sm font-medium hover:text-white hover:bg-gray-900 transition-colors cursor-default"
+                      className="px-4 py-1.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium hover:text-white dark:hover:text-black hover:bg-gray-900 dark:hover:bg-gray-200 transition-colors cursor-default"
                     >
                       {skill}
                     </span>
@@ -342,18 +451,18 @@ export default function Home() {
       </section>
 
       {/* PROJECTS SECTION */}
-      <section id="proyectos" className="py-20 px-4 md:px-8 bg-gray-50">
+      <section id="proyectos" className="py-20 px-4 md:px-8 bg-gray-50 dark:bg-gray-800/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Proyectos Destacados</h2>
-            <p className="text-gray-500">Algunos de los proyectos en los que he trabajado</p>
+            <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">Proyectos Destacados</h2>
+            <p className="text-gray-500 dark:text-gray-400">Algunos de los proyectos en los que he trabajado</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {DATA.projects.map((project, index) => (
-              <div key={index} className="group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-300 flex flex-col h-full hover:-translate-y-1">
+              <div key={index} className="group bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border border-gray-100 dark:border-gray-700 hover:shadow-2xl transition-all duration-300 flex flex-col h-full hover:-translate-y-1">
                 
-                <div className="h-48 relative overflow-hidden bg-gray-100">
+                <div className="h-48 relative overflow-hidden bg-gray-100 dark:bg-gray-700">
                   <Image
                     src={project.image}
                     alt={project.title}
@@ -363,22 +472,22 @@ export default function Home() {
                 </div>
 
                 <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold mb-1 group-hover:text-black transition">{project.title}</h3>
-                  <p className="text-xs font-semibold text-gray-400 mb-4 uppercase tracking-wide">{project.subtitle}</p>
+                  <h3 className="text-xl font-bold mb-1 group-hover:text-black dark:group-hover:text-white transition text-gray-900 dark:text-white">{project.title}</h3>
+                  <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 mb-4 uppercase tracking-wide">{project.subtitle}</p>
                   
-                  <p className="text-gray-600 text-sm mb-6 flex-grow">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-6 flex-grow">
                     {project.desc}
                   </p>
 
                   <div className="flex flex-wrap gap-2 mb-6">
                     {project.tags.map((tag, tIdx) => (
-                      <span key={tIdx} className="px-2 py-1 bg-white border border-gray-200 text-gray-600 text-xs rounded-md font-medium">
+                      <span key={tIdx} className="px-2 py-1 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 text-xs rounded-md font-medium">
                         {tag}
                       </span>
                     ))}
                   </div>
 
-                  <a href={DATA.contact.github} target="_blank" className="flex items-center gap-2 text-sm font-semibold text-gray-900 hover:text-black transition mt-auto">
+                  <a href={DATA.contact.github} target="_blank" className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-gray-100 hover:text-black dark:hover:text-white transition mt-auto">
                     Ver Proyecto <ExternalLink size={14} />
                   </a>
                 </div>
@@ -389,21 +498,21 @@ export default function Home() {
       </section>
 
       {/* SERVICES SECTION */}
-      <section id="servicios" className="py-20 px-4 md:px-8 bg-white">
+      <section id="servicios" className="py-20 px-4 md:px-8 bg-white dark:bg-gray-900">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Mis Servicios</h2>
-            <p className="text-gray-500">Lo que puedo hacer por ti y tu empresa</p>
+            <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">Mis Servicios</h2>
+            <p className="text-gray-500 dark:text-gray-400">Lo que puedo hacer por ti y tu empresa</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {DATA.services.map((service, index) => (
-              <div key={index} className="p-8 rounded-3xl bg-gray-50 border border-gray-100 hover:shadow-xl transition duration-300 hover:-translate-y-2 cursor-default group">
-                <div className="group-hover:scale-110 transition duration-300 origin-left">
+              <div key={index} className="p-8 rounded-3xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 hover:shadow-xl transition duration-300 hover:-translate-y-2 cursor-default group">
+                <div className="group-hover:scale-110 transition duration-300 origin-left text-black dark:text-white">
                     {service.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-3">{service.title}</h3>
-                <p className="text-gray-600 leading-relaxed text-sm">{service.desc}</p>
+                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{service.title}</h3>
+                <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-sm">{service.desc}</p>
               </div>
             ))}
           </div>
@@ -436,6 +545,7 @@ export default function Home() {
         </div>
       </footer>
 
-    </main>
+      </main>
+    </>
   );
 }

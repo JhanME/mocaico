@@ -88,9 +88,36 @@ export default function RootLayout({
 }>) {
   return (
     // Cambié 'en' a 'es' para mejor SEO local
-    <html lang="es"> 
+    <html lang="es" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  const stored = localStorage.getItem('darkMode');
+                  if (stored === null) {
+                    localStorage.setItem('darkMode', 'true');
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    const isDark = stored === 'true';
+                    if (isDark) {
+                      document.documentElement.classList.add('dark');
+                    } else {
+                      document.documentElement.classList.remove('dark');
+                    }
+                  }
+                } catch (e) {
+                  document.documentElement.classList.add('dark');
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         {children}
       </body>
