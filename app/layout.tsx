@@ -14,7 +14,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   // 1. IMPORTANTE: Define la URL base para que las rutas relativas de las imágenes funcionen
-  metadataBase: new URL("https://mocaico.dev"), 
+  metadataBase: new URL("https://www.mocaico.dev"), 
+
+  alternates: {
+    canonical: "/",
+  },
 
   title: {
     default: "Jhan Mocaico | Ingeniero Informático",
@@ -23,7 +27,7 @@ export const metadata: Metadata = {
   description: "Portafolio de Jhan Mocaico. Ingeniero Informático especializado en desarrollo web con Next.js, Python, IoT y Sistemas Embebidos.",
   
   keywords: ["Jhan Mocaico", "Mocaico", "Ingeniero Informático", "IoT", "Desarrollo Web", "Next.js", "Portafolio", "Perú", "Sistemas Embebidos"],
-  authors: [{ name: "Jhan Mocaico", url: "https://mocaico.dev" }],
+  authors: [{ name: "Jhan Mocaico", url: "https://www.mocaico.dev" }],
   creator: "Jhan Mocaico",
   publisher: "Jhan Mocaico",
   robots: {
@@ -42,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "es_PE",
-    url: "https://mocaico.dev",
+    url: "https://www.mocaico.dev",
     siteName: "Jhan Mocaico Portfolio",
     title: "Jhan Mocaico | Ingeniero Informático",
     description: "Transformando ideas en soluciones reales con Software y Hardware. Especializado en IoT, Sistemas Embebidos y Desarrollo Web moderno.",
@@ -74,11 +78,7 @@ export const metadata: Metadata = {
     ],
   },
   
-  // 4. Metadata adicional para mejor SEO
-  alternates: {
-    canonical: "https://mocaico.dev",
-  },
-  category: "Technology",
+  
 };
 
 export default function RootLayout({
