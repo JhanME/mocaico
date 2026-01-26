@@ -240,6 +240,14 @@ export default function Home() {
     { id: 'servicios', label: 'Servicios' },
   ];
 
+  const experienceMonths = (() => {
+    const start = new Date(2026, 0, 5);
+    const now = new Date();
+    let months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth());
+    if (now.getDate() < start.getDate()) months--;
+    return months < 1 ? 1 : months;
+  })();
+
   return (
     <>
       {/* OVERLAY DE ANIMACIÓN DE OLA - DETRÁS DE TODO */}
@@ -422,7 +430,27 @@ export default function Home() {
                   <div className="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-gray-300 dark:bg-gray-600 rounded-full border-2 border-white dark:border-gray-900 hover:scale-300 trasiton-all duration-300"></div>
                   <h4 className="font-bold text-lg text-gray-500 dark:text-gray-400 hover:text-lg trasiton-all duration-300">{DATA.about.education.university}</h4>
                   <p className="text-gray-700 dark:text-gray-300 font-medium ">{DATA.about.education.degree}</p>
-                  <p className="text-gray-400 dark:text-gray-500 text-sm italic hover:text-lg transition-all duration-300">{DATA.about.education.status}</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-sm italic hover:text-base transition-all duration-300">{DATA.about.education.status}</p>
+                </div>
+              </div>
+
+          
+              {/*Experiencia laboral*/}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-1 h-6 bg-black dark:bg-white rounded-full"></div>
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-gray-200">Experiencia Laboral</h3>
+                </div>
+
+                <div className="ml-4 border-l-2 border-gray-100 dark:border-gray-700 pl-6 pb-2 space-y-1 relative ">
+                  <div className="absolute -left-[5px] top-2 w-2.5 h-2.5 bg-gray-300 dark:bg-gray-600 rounded-full border-2 border-white dark:border-gray-900 hover:scale-300 trasiton-all duration-300"></div>
+                  <h4 className="font-bold text-lg text-gray-500 dark:text-gray-400 hover:text-lg hover:text-xl trasiton-all duration-300">
+                    <a href="https://galio.dev" target="_blank" rel="noopener noreferrer" className="hover:text-black dark:hover:text-white transition-colors">Galio Electronics</a>
+                  </h4>
+                  <p className="text-gray-700 dark:text-gray-300 font-medium">Practicante de Sistemas Embebidos y Plataformas IoT</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-sm italic hover:text-base transition-all duration-300">
+                    Enero 2026 - Actualidad · {experienceMonths} {experienceMonths === 1 ? 'mes' : 'meses'}
+                  </p>
                 </div>
               </div>
 
