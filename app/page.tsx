@@ -557,8 +557,8 @@ export default function Home() {
 
       <footer className="py-12 border-t border-border-subtle px-6 relative z-10 bg-deep-charcoal">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
-          <div className="font-mono text-[10px] text-zinc-600 uppercase tracking-[0.3em]">
-            © {new Date().getFullYear()} JHAN MOCAICO // CORE.STABLE
+          <div className="font-mono text-[10px] text-zinc-600 uppercase tracking-[0.3em] text-center md:text-left">
+            © 2026 Mocaico. Todos los derechos reservados. Operado por MOCAICO ESPIRITU JHAN JHOVER - RUC: 10600939489
           </div>
         </div>
       </footer>
