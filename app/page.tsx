@@ -24,7 +24,7 @@ const DATA = {
   experience: {
     company: "Galio Electronics",
     role: "Software Developer / IoT Engineer",
-    period: "Enero 2026 - Actualidad",
+    period: "ene. 2026 - jun. 2026 · 6 meses",
     description: "Diseñé e implementé sistemas end-to-end, integraciones cloud y herramientas internas que redujeron tiempos de respuesta ante incidencias mediante automatización con IA.",
     url: "https://galio.dev"
   },
@@ -194,10 +194,6 @@ export default function Home() {
                 {item.label}
               </button>
             ))}
-          </div>
-
-          <div className="hidden md:block text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-            v2.1.26 // STABLE
           </div>
 
           {/* Hamburger button — solo mobile */}
